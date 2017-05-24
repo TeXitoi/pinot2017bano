@@ -141,13 +141,17 @@
 \begin{frame}
   \frametitle{Et l'existant?}
 
-  \begin{itemize}
-  \item NAViTiA 1 (custom, préfix, phonétique, distance)
-  \item navitia 2 (custom, préfix, 3gram)
-  \item photon (elasticsearch, distance, geocodejson)
-  \item addok (redis, phonétique, distance, geocodejson)
-  \item geocoder-tester
-  \end{itemize}
+  \centering\footnotesize
+  \begin{tabular}{|c|ccl|}
+    \hline
+    projet & technologie & fautes & problèmes\\
+    \hline
+    NAViTiA 1 & custom & phonétique, distance & pas d'évolution\\
+    navitia 2 & custom & 3gram & pas de géo, mise à l'échelle\\
+    photon & elasticsearch & distance & alimentation OSM seul\\
+    addok & redis & phonétique, distance & mémoire, qualité des fautes\\
+    \hline
+  \end{tabular}
 \end{frame}
 
 \section{Les données}
@@ -160,20 +164,8 @@
   \item \foreign{level} configurable
   \item utilisation INSEE, code postaux
   \item import des contours géographiques
-  \item coordonées grâce au \foreign{role} \texttt{center} ou au
+  \item coordonnées grâce au \foreign{role} \texttt{center} ou au
     barycentre du contour
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{OpenStreetMap: les rues}
-
-  Utilisation des rues:
-  \begin{itemize}
-  \item regroupement des \foreign{ways} grâce à
-    \texttt{associatedStreet} ou par ville
-  \item affectation de la ville grâce aux contours géographiques
-  \item coordonées grâce à un point des \foreign{ways}
   \end{itemize}
 \end{frame}
 
@@ -184,7 +176,7 @@
   \item configuration à la lecture d'OSM
   \item type de POI
   \item si pas de \texttt{name}, utilisation du type de POI
-  \item coordonées en fonction du type de l'objet
+  \item coordonnées en fonction du type de l'objet
   \end{itemize}
 
   \tiny
@@ -213,16 +205,51 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{OpenStreetMap: les rues}
+
+  Utilisation des rues:
+  \begin{itemize}
+  \item regroupement des \foreign{ways} grâce à
+    \texttt{associatedStreet} ou par ville
+  \item affectation de la ville grâce aux contours géographiques
+  \item coordonnées grâce à un point des \foreign{ways}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{BANO: les adresses}
 
   \begin{itemize}
   \item import direct des adresses
   \item rattachement des régions administratives par INSEE et contours
   \end{itemize}
+
+\scriptsize
+\begin{verbatim}
+751124517P-20,20,Rue Hector Malot,75012,Paris,OSM,48.846781,2.377150
+\end{verbatim}
+
+\begin{verbatim}
+{
+  "house_number": "20",
+  "street": {
+    "street_name": "Rue Hector Malot",
+    "administrative_regions": [
+      {"insee": "75112", "level": 9, "name": "Paris", "zip_codes": ["75012"]},
+      {"insee": "75056", "level": 8, "name": "Paris", "zip_codes": []}
+    ],
+  },
+  "label": "20 Rue Hector Malot (Paris)",
+  "coord": { "lat": 48.846781, "lon": 2.37715 },
+  "zip_codes": ["75012"]
+}
+\end{verbatim}
 \end{frame}
 
 \begin{frame}
   \frametitle{GTFS: les zones d'arrêt}
+
+  description GTFS et zones/points d'arrêt
 
   \begin{itemize}
   \item import des zones d'arrêt uniquement (\texttt{location\_type=1})
@@ -236,10 +263,12 @@
 \begin{frame}
   \frametitle{La recherche}
 
+  3 exemples et présentation dessus
+
   \begin{itemize}
   \item geocodejson
   \item mot + prefix + 3gram + type d'objet + code postal + importance
-  \item priorisation optionelle par coordonées
+  \item priorisation optionelle par coordonnées
   \item filtre optionnel par contour géographique
   \end{itemize}
 \end{frame}
@@ -247,43 +276,48 @@
 \section{Retour d'expérience}
 
 \begin{frame}
-  \frametitle{Adresses et rues dans OSM}
+  \frametitle{OpenStreetMap}
 
-  Les adresses et les rues dans OSM, c'est compliqué:
+  Les plus:
   \begin{itemize}
-  \item pleins de modélisations
-  \item décorélation explicite de la ville
-  \item code postaux
+  \item bons contours géographiques pour les régions administratives
+  \item corrections instantanées
+  \item bonne qualité des rues
+  \item communauté sympa et réactive
   \end{itemize}
-\end{frame}
 
-\begin{frame}
-  \frametitle{Problèmes de contributions}
-
-  Les données contiennent des problèmes de contributions:
+  Les moins:
   \begin{itemize}
-  \item \foreign{boundaries} cassées
-  \item rues mal regroupées
+  \item complexité de modélisation (plusieurs moyens de modéliser la
+    même chose, liens non implicite de la ville, codes postaux,
+    contours géographiques...)
+  \item problèmes de contributions (contours cassées, rues mal regroupées...)
+  \item peu d'adresses
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{BANO}
 
+  Les plus:
   \begin{itemize}
-  \item plus d'évolution
+  \item couverture quasi parfaite de la France
+  \item corrections réalisables facilement
+  \end{itemize}
+
+  Les moins:
+  \begin{itemize}
+  \item pas d'évolution
   \item pas de stratégie de fusion BAN/BANO
   \end{itemize}
 \end{frame}
 
+\section{Technique}
+
 \begin{frame}
   \frametitle{Technique}
 
-  \begin{itemize}
-  \item Rust
-  \item elasticsearch
-  \item schéma:
-  \end{itemize}
+  schema: data -> *2mimir -> base (mimir) -> bragi -> jormungandr
 \end{frame}
 
 \section{Conclusion}
@@ -291,6 +325,7 @@
 \begin{frame}
   \frametitle{Conclusion}
 
+  liens github, navitia.io, demo
 \end{frame}
 
 \begin{frame}
