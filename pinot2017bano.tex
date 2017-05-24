@@ -108,24 +108,44 @@
   \titlepage
 \end{frame}
 
-\section{Introduction}
-
-\begin{frame}
-  \frametitle{Introduction}
-
-  Mimir!
-\end{frame}
-
 \section{Pourquoi?}
 
 \begin{frame}
-  \frametitle{Pourquoi?}
+  \frametitle{navitia}
 
   \begin{itemize}
-  \item présentation navitia
-  \item besoin autocompletion mondiale
-  \item besoins spécifiques (zones d'arrêt)
-  \item photon et addok
+  \item le cœur de l'information voyageur de Kisio Digital
+  \item une API REST
+    \begin{itemize}
+    \item calcul d'itinéraire multimodal
+    \item fiche horaires
+    \item prochains passages
+    \item autocompletion et géocodage inverse
+    \end{itemize}
+  \item disponible via \url{https://navitia.io}, notre service ouvert
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Nouveaux besoins autour du géocodage}
+
+  \begin{itemize}
+  \item autocompletion sans \foreign{coverage} potentiellement sur le monde
+  \item prise en compte de la localisation de l'utilisateur
+  \item gestion des zones d'arrêt en fonction des droits de l'utilisateur
+  \item séparation en (plus de) microservice
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Et l'existant?}
+
+  \begin{itemize}
+  \item NAViTiA 1 (custom, préfix, phonétique, distance)
+  \item navitia 2 (custom, préfix, 3gram)
+  \item photon (elasticsearch, distance, geocodejson)
+  \item addok (redis, phonétique, distance, geocodejson)
+  \item geocoder-tester
   \end{itemize}
 \end{frame}
 
