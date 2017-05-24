@@ -152,13 +152,82 @@
 \section{Les données}
 
 \begin{frame}
-  \frametitle{Les données}
+  \frametitle{OpenStreetMap: les villes}
 
-  \begin{description}
-  \item[BANO] adresses
-  \item[OSM] rues, villes, POI
-  \item[stops.txt] zones d'arrêt
-  \end{description}
+  Utilisation des villes, arrondissement, pays... (\foreign{administrative regions}):
+  \begin{itemize}
+  \item \foreign{level} configurable
+  \item utilisation INSEE, code postaux
+  \item import des contours géographiques
+  \item coordonées grâce au \foreign{role} \texttt{center} ou au
+    barycentre du contour
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{OpenStreetMap: les rues}
+
+  Utilisation des rues:
+  \begin{itemize}
+  \item regroupement des \foreign{ways} grâce à
+    \texttt{associatedStreet} ou par ville
+  \item affectation de la ville grâce aux contours géographiques
+  \item coordonées grâce à un point des \foreign{ways}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{OpenStreetMap: les POI}
+
+  \begin{itemize}
+  \item configuration à la lecture d'OSM
+  \item type de POI
+  \item si pas de \texttt{name}, utilisation du type de POI
+  \item coordonées en fonction du type de l'objet
+  \end{itemize}
+
+  \tiny
+\begin{verbatim}
+{
+  "poi_types": [
+    {"id": "amenity:school", "name": "École"},
+    {"id": "amenity:bar_tobacco", "name": "Bar-tabac"},
+  ],
+  "rules": [
+    {
+      "osm_tags_filters": [{"key": "amenity", "value": "college"}],
+      "poi_type_id": "amenity:school"
+    },
+    {
+      "osm_tags_filters": [{"key": "amenity", "value": "university"}],
+      "poi_type_id": "amenity:school"
+    },
+    {
+      "osm_tags_filters": [{"key": "amenity", "value": "cafe"}, {"key": "tobacco", "value": "yes"}],
+      "poi_type_id": "amenity:bar_tobacco"
+    }
+  ]
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}
+  \frametitle{BANO: les adresses}
+
+  \begin{itemize}
+  \item import direct des adresses
+  \item rattachement des régions administratives par INSEE et contours
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{GTFS: les zones d'arrêt}
+
+  \begin{itemize}
+  \item import des zones d'arrêt uniquement (\texttt{location\_type=1})
+  \item importance par nombre de point d'arrêt
+  \item rattachement des régions administratives par contours
+  \end{itemize}
 \end{frame}
 
 \section{La recherche}
@@ -168,9 +237,9 @@
 
   \begin{itemize}
   \item geocodejson
-  \item prefix + 3gram + type d'objet + code postal
-  \item from
-  \item shape
+  \item mot + prefix + 3gram + type d'objet + code postal + importance
+  \item priorisation optionelle par coordonées
+  \item filtre optionnel par contour géographique
   \end{itemize}
 \end{frame}
 
