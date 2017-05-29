@@ -249,28 +249,74 @@
 \begin{frame}
   \frametitle{GTFS: les zones d'arrêt}
 
-  description GTFS et zones/points d'arrêt
+  \begin{block}{Le \foreign{General Transit Feed Specification}
+      (GTFS)}
+    \begin{itemize}
+    \item Standard des données de transport
+    \item ensemble de fichier CSV
+    \end{itemize}
+  \end{block}
 
-  \begin{itemize}
-  \item import des zones d'arrêt uniquement (\texttt{location\_type=1})
-  \item importance par nombre de point d'arrêt
-  \item rattachement des régions administratives par contours
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{.65\linewidth}
+      \begin{itemize}
+      \item import des zones d'arrêt uniquement (\texttt{location\_type=1})
+      \item importance par nombre de point d'arrêt
+      \item rattachement des régions administratives par contours
+      \end{itemize}
+    \end{column}
+    \begin{column}{.35\linewidth}
+      \includegraphics[width=\textwidth]{images/stop-area}
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
 \section{La recherche}
 
 \begin{frame}
-  \frametitle{La recherche}
+  \frametitle{Autocompletion par type}
 
-  3 exemples et présentation dessus
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/autocomplete-paris}
+\end{frame}
 
-  \begin{itemize}
-  \item geocodejson
-  \item mot + prefix + 3gram + type d'objet + code postal + importance
-  \item priorisation optionelle par coordonnées
-  \item filtre optionnel par contour géographique
-  \end{itemize}
+\begin{frame}
+  \frametitle{Autocompletion tolérante aux fautes}
+
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/autocomplete-typo}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Autocompletion par géolocalisation}
+
+  \centering
+  \begin{columns}
+    \begin{column}{.5\linewidth}
+      \begin{block}{\strut Sans coordonnées}
+        \includegraphics[width=\textwidth]{images/autocomplete-20-hec-mal}
+      \end{block}
+      \begin{block}{\strut 3 Place de la République (Paris)}
+        \includegraphics[width=\textwidth]{images/autocomplete-20-hec-mal-paris}
+      \end{block}
+    \end{column}
+    \begin{column}{.5\linewidth}
+      \begin{block}{\strut 3 Rue Lebrument (Rouen)}
+        \includegraphics[width=\textwidth]{images/autocomplete-20-hec-mal-rouen}
+      \end{block}
+      \begin{block}{\strut 2 Rue de la République (Lyon)}
+        \includegraphics[width=\textwidth]{images/autocomplete-20-hec-mal-lyon}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Geolocalisation inversée}
+
+  \centering
+  \includegraphics[width=.8\linewidth]{images/reverse-geocoding}
 \end{frame}
 
 \section{Retour d'expérience}
