@@ -62,7 +62,7 @@
 
 \title[BANO + OSM + Navitia]{BANO + OSM + Navitia = un nouveau géocodeur pour les transports}
 
-\author{Guillaume Pinot \and Noémie Lehuby \and Pascal Rhod}
+\author{Guillaume Pinot \and Pascal Rhod}
 
 \institute[Kisio Digital] % (optional, but mostly needed)
 {
@@ -72,7 +72,7 @@
 %% - Use the \inst command only if there are several affiliations.
 %% - Keep it simple, no one is interested in your street address.
 
-\date{State of the Map France 2017}
+\date{Meetup Open Transport}
 %% - Either use conference name or its abbreviation.
 %% - Not really informative to the audience, more for people (including
 %%   yourself) who are reading the slides online
@@ -138,139 +138,27 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Et l'existant?}
-
-  \centering\footnotesize
-  \begin{tabular}{|c|ccl|}
-    \hline
-    projet & technologie & fautes & problèmes\\
-    \hline
-    NAViTiA 1 & custom & phonétique, distance & pas d'évolution\\
-    navitia 2 & custom & 3gram & pas de géo, mise à l'échelle\\
-    photon & elasticsearch & distance & alimentation OSM seul\\
-    addok & redis & phonétique, distance & mémoire, qualité des fautes\\
-    \hline
-  \end{tabular}
-\end{frame}
-
 \section{Les données}
 
 \begin{frame}
-  \frametitle{OpenStreetMap: les villes}
+  \frametitle{Les données}
 
-  Utilisation des villes, arrondissement, pays... (\foreign{administrative regions}):
+  OpenStreetMap:
   \begin{itemize}
-  \item \foreign{level} configurable
-  \item utilisation INSEE, code postaux
-  \item import des contours géographiques
-  \item coordonnées grâce au \foreign{role} \texttt{center} ou au
-    barycentre du contour
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{OpenStreetMap: les POI}
-
-  \begin{itemize}
-  \item configuration à la lecture d'OSM
-  \item type de POI
-  \item si pas de \texttt{name}, utilisation du type de POI
-  \item coordonnées en fonction du type de l'objet
+  \item Villes: Paris
+  \item Points d'intérêt: Mairie du 13e (Paris)
+  \item Rues: Rue Hector Malot (Lyon)
   \end{itemize}
 
-  \tiny
-\begin{verbatim}
-{
-  "poi_types": [
-    {"id": "amenity:school", "name": "École"},
-    {"id": "amenity:bar_tobacco", "name": "Bar-tabac"},
-  ],
-  "rules": [
-    {
-      "osm_tags_filters": [{"key": "amenity", "value": "college"}],
-      "poi_type_id": "amenity:school"
-    },
-    {
-      "osm_tags_filters": [{"key": "amenity", "value": "university"}],
-      "poi_type_id": "amenity:school"
-    },
-    {
-      "osm_tags_filters": [{"key": "amenity", "value": "cafe"}, {"key": "tobacco", "value": "yes"}],
-      "poi_type_id": "amenity:bar_tobacco"
-    }
-  ]
-}
-\end{verbatim}
-\end{frame}
-
-\begin{frame}
-  \frametitle{OpenStreetMap: les rues}
-
-  Utilisation des rues:
+  BANO:
   \begin{itemize}
-  \item regroupement des \foreign{ways} grâce à
-    \texttt{associatedStreet} ou par ville
-  \item affectation de la ville grâce aux contours géographiques
-  \item coordonnées grâce à un point des \foreign{ways}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{BANO: les adresses}
-
-  \begin{itemize}
-  \item import direct des adresses
-  \item rattachement des régions administratives par INSEE et contours
+  \item Adresses: 20 rue Hector Malot (Lyon)
   \end{itemize}
 
-\scriptsize
-\begin{verbatim}
-751124517P-20,20,Rue Hector Malot,75012,Paris,OSM,48.846781,2.377150
-\end{verbatim}
-
-\begin{verbatim}
-{
-  "house_number": "20",
-  "street": {
-    "street_name": "Rue Hector Malot",
-    "administrative_regions": [
-      {"insee": "75112", "level": 9, "name": "Paris", "zip_codes": ["75012"]},
-      {"insee": "75056", "level": 8, "name": "Paris", "zip_codes": []}
-    ],
-  },
-  "label": "20 Rue Hector Malot (Paris)",
-  "coord": { "lat": 48.846781, "lon": 2.37715 },
-  "zip_codes": ["75012"]
-}
-\end{verbatim}
-\end{frame}
-
-\begin{frame}
-  \frametitle{GTFS: les zones d'arrêt}
-
-  \begin{block}{Le \foreign{General Transit Feed Specification}
-      (GTFS)}
-    \begin{itemize}
-    \item Standard des données de transport
-    \item ensemble de fichier CSV
-    \end{itemize}
-  \end{block}
-
-  \begin{columns}
-    \begin{column}{.65\linewidth}
-      \begin{itemize}
-      \item import de plusieurs GTFS
-      \item import des zones d'arrêt uniquement (\texttt{location\_type=1})
-      \item importance par nombre de point d'arrêt
-      \item rattachement des régions administratives par contours
-      \end{itemize}
-    \end{column}
-    \begin{column}{.35\linewidth}
-      \includegraphics[width=\textwidth]{images/stop-area}
-    \end{column}
-  \end{columns}
-
+  Des GTFS:
+  \begin{itemize}
+  \item Zones d'arrêt: Châtelet
+  \end{itemize}
 \end{frame}
 
 \section{La recherche}
@@ -318,45 +206,6 @@
 
   \centering
   \includegraphics[width=.8\linewidth]{images/reverse-geocoding}
-\end{frame}
-
-\section{Retour d'expérience}
-
-\begin{frame}
-  \frametitle{OpenStreetMap}
-
-  Les plus:
-  \begin{itemize}
-  \item bons contours géographiques pour les régions administratives
-  \item corrections instantanées
-  \item bonne qualité des rues
-  \item communauté sympa et réactive
-  \end{itemize}
-
-  Les moins:
-  \begin{itemize}
-  \item complexité de modélisation (plusieurs moyens de modéliser la
-    même chose, liens non implicite de la ville, codes postaux,
-    contours géographiques...)
-  \item problèmes de contributions (contours cassées, rues mal regroupées...)
-  \item peu d'adresses
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{BANO}
-
-  Les plus:
-  \begin{itemize}
-  \item couverture quasi parfaite de la France
-  \item corrections réalisables facilement
-  \end{itemize}
-
-  Les moins:
-  \begin{itemize}
-  \item pas d'évolution
-  \item pas de stratégie de fusion BAN/BANO
-  \end{itemize}
 \end{frame}
 
 \section{Technique}
